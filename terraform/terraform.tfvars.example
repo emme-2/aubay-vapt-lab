@@ -1,0 +1,23 @@
+# =====================================================================
+#  Copia questo file in  terraform.tfvars  e compila i valori.
+#  terraform.tfvars contiene segreti: è già in .gitignore, NON committarlo.
+# =====================================================================
+
+# --- OBBLIGATORI ---
+
+# Token API Hetzner Cloud (Read & Write).
+hcloud_token = "INCOLLA_QUI_IL_TOKEN_READ_WRITE"
+
+# IP pubblico autorizzato a SSH (22) e Guacamole (443), in formato CIDR /32.
+#   • In fase di prep: scopri il tuo con  `make my-ip`  e incollalo qui.
+#   • Prima della demo: sostituiscilo con l'IP della sede e rilancia `make provision`.
+admin_source_ips = ["TUO.IP.PUBBLICO/32"]
+
+
+# --- OPZIONALI (decommenta solo se vuoi cambiare il default) ---
+
+# ssh_public_key_path  = "~/.ssh/id_ed25519.pub"
+# ssh_private_key_path = "~/.ssh/id_ed25519"
+# location             = "fsn1"    # fsn1=Falkenstein, hel1=Helsinki, nbg1=Norimberga
+# server_type          = "ccx33"
+# server_name          = "vapt-lab"

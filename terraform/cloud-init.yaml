@@ -1,0 +1,19 @@
+#cloud-config
+# Preparazione minima dell'host. Il grosso lo fa Ansible.
+package_update: true
+package_upgrade: false
+
+packages:
+  - python3
+  - python3-apt
+
+write_files:
+  - path: /etc/motd
+    content: |
+      =========================================================
+       Aubay VA/PT Demo Lab  —  AMBIENTE DELIBERATAMENTE VULNERABILE
+       Uso esclusivo nel lab isolato. Non puntare i tool verso l'esterno.
+      =========================================================
+
+runcmd:
+  - [ touch, /var/lib/cloud/instance/vapt-lab-ready ]
