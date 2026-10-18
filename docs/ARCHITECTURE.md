@@ -1,20 +1,19 @@
 # Aubay VA/PT Demo Lab — Documento di Architettura
 
-> **Knowledge base del laboratorio.** Questo documento è la fonte di verità su
-> *cosa* costruiamo, *come* è fatto e *perché* abbiamo preso ogni decisione.
+> **Knowledge base del laboratorio.** Questo documento è la SOT del lab.
+> *Cosa* costruiamo, *come* è fatto e *perché* abbiamo preso ogni decisione.
 > Il codice (Terraform / Ansible / Docker Compose) implementa quanto descritto qui.
 >
-> **Versione:** 0.1 — 2026-10-18 · **Owner:** Matteo (Aubay, Network & Security)
-> **Scopo:** demo live di Vulnerability Assessment e Penetration Test per un
-> partner di Digital Advisory.
+> **Versione:** 0.1 — 2026-10-18 · **Owner:** Matteo Mirenda
+> **Scopo:** demo live di Vulnerability Assessment e Penetration Test
 
 ---
 
 ## 1. Scopo e narrativa
 
-L'obiettivo della demo è mostrare a un partner di Digital Advisory le capacità
-Aubay in ambito **VA (Vulnerability Assessment)** e **PT (Penetration Test)**,
-così da essere proposti come braccio tecnico durante le loro consulenze ai clienti.
+L'obiettivo della demo è mostrare a potenziali partner le capacità
+Aubay in ambito **VA (Vulnerability Assessment)** e **PT (Penetration Test)**.
+
 
 **Posizionamento (filo conduttore di tutta la demo):**
 
@@ -31,7 +30,7 @@ sa *fare*, non solo rivendere.
 
 | Aspetto | Scelta | Conseguenza di design |
 |---|---|---|
-| Formato | **Live, guidata da Matteo** | Ogni comando dev'essere **deterministico e ripetibile**: nessun esito incerto in sala. |
+| Formato | **Live, guidata** | Ogni comando dev'essere **deterministico e ripetibile**: nessun esito incerto in sala. |
 | Audience | **Mista business + tecnico** | Serve profondità tecnica *e* almeno un momento "wow" leggibile dal business (dashboard, numeri, prima/dopo). |
 | Provider | **Hetzner Cloud CCX33** | vCPU dedicati → performance prevedibile durante la live; RAM abbondante per OpenVAS. |
 
@@ -58,7 +57,7 @@ portabilità totale, ricostruzione rapida, footprint ridotto, IaC pulita.
 se in futuro servisse un target che richiede una VM vera (es. un exploit kernel
 specifico), possiamo aggiungere un nodo KVM senza cambiare provider.
 
-> ⚠️ **Nota di onestà tecnica:** nella fase di brainstorming era emersa l'idea
+> ⚠️ **Nota tecnica:** nella fase di brainstorming era emersa l'idea
 > "VM realistiche". La rivalutazione ha portato al modello container-first perché
 > offre lo stesso valore dimostrativo con molta meno fragilità. Il CCX33 resta la
 > scelta corretta per il motivo della performance deterministica, non per la nested
@@ -93,11 +92,10 @@ codice in pochi minuti, nessun lock-in."*
 | Tipo | **CCX33** (vCPU dedicati) |
 | Risorse | 8 vCPU dedicati · 32 GB RAM · 240 GB NVMe |
 | Location | Falkenstein (DE), Norimberga (DE) o Helsinki (FI) — data residency UE |
-| Costo | ~€138/mese di listino (IVA escl.), **fatturato a ore** (~€0,19/h) |
-| Costo reale demo | ~€32 netti (~€39 IVA incl.) per una settimana di prep + demo day |
+| Costo | ~€138/mese di listino (IVA escl.) |
 | OS | Ubuntu Server 26.04 LTS |
 
-**Modello di costo (da capire bene):** su Hetzner Cloud un server **spento continua
+**Modello di costo:** su Hetzner Cloud un server **spento continua
 a costare** finché *esiste*. Si smette di pagare solo con la **cancellazione**
 (`terraform destroy`). Strategie:
 
@@ -153,11 +151,6 @@ implementati in Ansible; il piano IP sopra è fisso e stabile.
 clientless (solo browser, HTTPS) che ti dà in un'unica scheda i desktop/terminali
 di redteam, blueteam e delle macchine. In sala apri il browser e hai tutto, senza
 distribuire chiavi SSH o client RDP.
-
-> **Chiarimento rispetto al brainstorming:** nel primo scambio Guacamole era stato
-> ipotizzato come "bastione/reverse proxy" dentro il datacenter da attaccare. Sono
-> due cose diverse: Guacamole = *tuo* strumento di accesso; il "reverse proxy
-> bersaglio" è invece **Nginx** (§6.2), che sì viene analizzato.
 
 ### 6.2 Area DATACENTER (i target "server")
 
@@ -276,23 +269,13 @@ aubay-vapt-lab/
 accesso via Guacamole.
 
 **Fase 2 (futura):**
-- **Caldera (MITRE ATT&CK)** — attacchi mappati su framework ATT&CK, parla il
-  linguaggio che i clienti del partner conoscono.
+- **Caldera (MITRE ATT&CK)** — attacchi mappati su framework ATT&CK.
 - **Trivy** integrato nel flusso come segmento container-security.
 - Target su **VM KVM reali** se servirà un exploit a livello kernel.
 
 ---
 
-## Appendice A — Checklist preparazione account Hetzner (a carico di Matteo)
-
-1. Account su **Hetzner Cloud** (console.hetzner.cloud) + verifica completata.
-2. Metodo di pagamento aggiunto.
-3. Progetto `aubay-vapt-lab`.
-4. API Token **Read & Write** (Security → API Tokens) → in `terraform.tfvars`.
-5. Coppia SSH locale (`ssh-keygen -t ed25519`) → la pubblica va a Terraform.
-6. Location scelta: Falkenstein (DE) o Helsinki (FI).
-
-## Appendice B — Glossario rapido
+## Appendice  — Glossario rapido
 
 - **VA** — Vulnerability Assessment: individuazione e classificazione delle
   vulnerabilità (fotografia del rischio).
