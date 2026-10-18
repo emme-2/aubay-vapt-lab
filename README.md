@@ -79,7 +79,32 @@ Target creati:
 > (login `admin`/`password`). Lo faremo nel runbook della demo.
 > Le credenziali deboli sono **volute** e servono alla dimostrazione del PT.
 
-I tool VA/PT (OpenVAS, Nuclei, Trivy, toolbox red team) arrivano con la Fase 4.
+### Fase 4 — motore VA/PT + connessioni Guacamole
+
+```bash
+make configure         # ora builda anche redteam (Kali) e avvia blueteam (OpenVAS)
+make seed-guac         # crea in Guacamole le connessioni SSH (usa GUAC_PASS=... se l'hai cambiata)
+```
+
+Nodi aggiunti:
+
+| Rete | Host | Cosa |
+|---|---|---|
+| cyber | `redteam.corp.local` (172.20.30.10) | Kali: nmap, hydra, sqlmap, ffuf, gobuster, Metasploit, Nuclei, Trivy |
+| cyber | `blueteam.corp.local` (172.20.30.20) | OpenVAS/GVM |
+
+**Collaudo:** apri Guacamole, connettiti a **redteam (Kali)** e prova:
+
+```bash
+nmap -sV web.corp.local
+nuclei -u http://web.corp.local
+hydra -L /opt/wordlists/users.txt -P /opt/wordlists/passwords.txt ws01.corp.local ssh
+```
+
+> **OpenVAS** sincronizza il feed NVT al primo avvio: **30-60+ minuti**.
+> Segui l'avanzamento con `docker logs -f vapt-openvas`. Le scansioni VA
+> complete si lanciano a feed completato. L'accesso web a OpenVAS e la
+> dashboard arrivano con la Fase 5.
 
 ## Prima della demo: aggiornare l'IP ammesso
 

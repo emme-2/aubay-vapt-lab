@@ -1,0 +1,47 @@
+# Motore VA/PT: redteam (Kali) + blueteam (OpenVAS) — generato da Ansible.
+
+services:
+
+  # ---------- RED TEAM (toolbox offensiva) ----------
+  redteam:
+    build: ./redteam
+    image: vapt-redteam:latest
+    container_name: vapt-redteam
+    # Multi-homed: deve raggiungere datacenter e utenti per attaccarli
+    networks:
+      cyber:
+        ipv4_address: 172.20.30.10
+        aliases: [redteam.corp.local]
+      datacenter: {}
+      users: {}
+    restart: unless-stopped
+
+  # ---------- BLUE TEAM (VA: OpenVAS/GVM) ----------
+  blueteam:
+    image: immauss/openvas:latest
+    container_name: vapt-openvas
+    environment:
+      USERNAME: "{{ openvas_user }}"
+      PASSWORD: "{{ openvas_password }}"
+      HTTPS: "false"
+    volumes:
+      - ./data/openvas:/data
+    # Deve raggiungere datacenter e utenti per scansionarli
+    networks:
+      cyber:
+        ipv4_address: 172.20.30.20
+        aliases: [blueteam.corp.local, openvas.corp.local]
+      datacenter: {}
+      users: {}
+    restart: unless-stopped
+
+networks:
+  cyber:
+    external: true
+    name: vapt_cyber
+  datacenter:
+    external: true
+    name: vapt_datacenter
+  users:
+    external: true
+    name: vapt_users

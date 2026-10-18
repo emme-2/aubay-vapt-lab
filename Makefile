@@ -6,7 +6,10 @@
 TF := terraform -chdir=terraform
 
 .DEFAULT_GOAL := help
-.PHONY: help my-ip init plan provision configure deploy allow-ip status ssh check-targets destroy
+GUAC_USER ?= guacadmin
+GUAC_PASS ?= guacadmin
+
+.PHONY: help my-ip init plan provision configure deploy allow-ip status ssh check-targets seed-guac destroy
 
 help: ## Mostra questo aiuto
 	@echo "Aubay VA/PT Demo Lab"
@@ -48,6 +51,9 @@ status: ## Mostra IP, URL Guacamole e stato
 
 check-targets: ## Verifica che i target rispondano sulle reti interne (via SSH)
 	@$$($(TF) output -raw ssh_command) 'bash -s' < scripts/check-targets.sh
+
+seed-guac: ## Crea in Guacamole le connessioni SSH ai nodi (GUAC_PASS=... se cambiata)
+	@$$($(TF) output -raw ssh_command) 'bash -s -- $(GUAC_USER) $(GUAC_PASS)' < scripts/seed-guacamole.sh
 
 ssh: ## Connessione SSH al server
 	@eval "$$($(TF) output -raw ssh_command)"

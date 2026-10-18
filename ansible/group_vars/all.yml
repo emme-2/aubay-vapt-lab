@@ -11,6 +11,13 @@ lab_networks:
 # --- Target (Fase 3) ---
 targets_dir: /opt/vapt-lab/targets
 
+# --- Tool VA/PT (Fase 4) ---
+tools_dir: /opt/vapt-lab/tools
+openvas_user: admin
+openvas_password: "LabOpenVAS-2026"
+# Password root del nodo redteam (SSH via Guacamole). Nodo interno al lab.
+redteam_root_password: "redteam"
+
 # --- Guacamole (layer di accesso) ---
 guacamole_version: "1.5.5"
 guac_dir: /opt/vapt-lab/access

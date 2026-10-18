@@ -1,0 +1,39 @@
+# =====================================================================
+#  Ruolo: tools — motore VA/PT
+#  redteam (Kali toolbox) + blueteam (OpenVAS).
+# =====================================================================
+- name: Crea la directory dei tool
+  ansible.builtin.file:
+    path: "{{ tools_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Copia il build context del redteam
+  ansible.builtin.copy:
+    src: redteam
+    dest: "{{ tools_dir }}/"
+    mode: "0644"
+
+- name: Rendi leggibili/attraversabili i file copiati
+  ansible.builtin.command: "chmod -R a+rX {{ tools_dir }}"
+  changed_when: false
+
+- name: Template del docker-compose dei tool
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ tools_dir }}/docker-compose.yml"
+    mode: "0644"
+
+- name: Build e avvio dei tool (Kali + OpenVAS)
+  ansible.builtin.command: docker compose up -d --build
+  args:
+    chdir: "{{ tools_dir }}"
+  register: tools_up
+  changed_when: "'Started' in tools_up.stderr or 'Created' in tools_up.stderr or 'Built' in tools_up.stderr"
+
+- name: Nota sul feed OpenVAS
+  ansible.builtin.debug:
+    msg: >
+      OpenVAS (blueteam) sta sincronizzando il feed NVT in background:
+      può richiedere 30-60+ minuti al primo avvio. Lascialo completare
+      prima di lanciare scansioni. Stato: docker logs -f vapt-openvas
