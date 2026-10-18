@@ -1,0 +1,23 @@
+# Postfix — configurazione didattica (debolezze volute per il VA/PT)
+myhostname = mail.corp.local
+mydomain = corp.local
+myorigin = $mydomain
+inet_interfaces = all
+inet_protocols = ipv4
+mydestination = $myhostname, localhost.$mydomain, localhost
+
+# Reti interne del lab: relay permesso dall'interno (finding "open relay" interno)
+mynetworks = 127.0.0.0/8, 172.20.0.0/16
+
+# VRFY abilitato di proposito → user enumeration via SMTP
+disable_vrfy_command = no
+smtpd_helo_required = no
+
+# Banner che rivela il software (information disclosure)
+smtpd_banner = $myhostname ESMTP Postfix (Debian/demo-lab)
+
+# Nessun TLS (in chiaro) — altro finding tipico
+smtpd_tls_security_level = none
+
+compatibility_level = 3.6
+maillog_file = /dev/stdout

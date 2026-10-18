@@ -12,3 +12,4 @@
     - docker     # Docker Engine + plugin compose
     - networks   # le 3 reti isolate (datacenter / users / cyber)
     - access     # Guacamole dietro Nginx/TLS (unico ingresso)
+    - targets    # target da attaccare: datacenter + workstation (Fase 3)

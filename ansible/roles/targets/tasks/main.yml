@@ -1,0 +1,38 @@
+# =====================================================================
+#  Ruolo: targets — l'azienda-cliente da attaccare
+#  Datacenter: proxy Nginx, DVWA, Juice Shop, mail.
+#  Utenti:     ws01, ws02 (SSH + credenziali deboli).
+# =====================================================================
+- name: Crea la directory dei target
+  ansible.builtin.file:
+    path: "{{ targets_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Copia i build context e le configurazioni dei target
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ targets_dir }}/"
+    mode: "0644"
+  loop:
+    - workstation
+    - mail
+    - proxy
+    - ws01_notes.txt
+
+- name: Rendi eseguibili eventuali entrypoint
+  ansible.builtin.command: "chmod -R a+rX {{ targets_dir }}"
+  changed_when: false
+
+- name: Template del docker-compose dei target
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ targets_dir }}/docker-compose.yml"
+    mode: "0644"
+
+- name: Build e avvio dei target
+  ansible.builtin.command: docker compose up -d --build
+  args:
+    chdir: "{{ targets_dir }}"
+  register: targets_up
+  changed_when: "'Started' in targets_up.stderr or 'Created' in targets_up.stderr or 'Built' in targets_up.stderr"

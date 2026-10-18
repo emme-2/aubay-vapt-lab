@@ -8,6 +8,9 @@ lab_networks:
   - { name: vapt_users,      subnet: "172.20.20.0/24" }
   - { name: vapt_cyber,      subnet: "172.20.30.0/24" }
 
+# --- Target (Fase 3) ---
+targets_dir: /opt/vapt-lab/targets
+
 # --- Guacamole (layer di accesso) ---
 guacamole_version: "1.5.5"
 guac_dir: /opt/vapt-lab/access

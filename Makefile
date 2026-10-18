@@ -6,7 +6,7 @@
 TF := terraform -chdir=terraform
 
 .DEFAULT_GOAL := help
-.PHONY: help my-ip init plan provision configure deploy allow-ip status ssh destroy
+.PHONY: help my-ip init plan provision configure deploy allow-ip status ssh check-targets destroy
 
 help: ## Mostra questo aiuto
 	@echo "Aubay VA/PT Demo Lab"
@@ -45,6 +45,9 @@ allow-ip: ## Aggiorna al volo l'IP ammesso dal firewall. Uso: make allow-ip IP=1
 
 status: ## Mostra IP, URL Guacamole e stato
 	@$(TF) output
+
+check-targets: ## Verifica che i target rispondano sulle reti interne (via SSH)
+	@$$($(TF) output -raw ssh_command) 'bash -s' < scripts/check-targets.sh
 
 ssh: ## Connessione SSH al server
 	@eval "$$($(TF) output -raw ssh_command)"

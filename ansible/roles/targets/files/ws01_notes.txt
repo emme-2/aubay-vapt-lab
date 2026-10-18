@@ -1,0 +1,7 @@
+Promemoria — accessi infrastruttura
+-----------------------------------
+Il server di posta e i servizi sono gestiti dall'account di servizio.
+Le credenziali del pannello mail stanno con l'IT.
+
+TEMP: account di servizio sull'altra workstation (ws02):  svc / service
+Da ruotare appena possibile. -- J.
