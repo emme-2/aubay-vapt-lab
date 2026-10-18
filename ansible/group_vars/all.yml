@@ -1,0 +1,20 @@
+# =====================================================================
+#  Variabili condivise del lab
+# =====================================================================
+
+# --- Reti Docker isolate (le 3 aree) ---
+lab_networks:
+  - { name: vapt_datacenter, subnet: "172.20.10.0/24" }
+  - { name: vapt_users,      subnet: "172.20.20.0/24" }
+  - { name: vapt_cyber,      subnet: "172.20.30.0/24" }
+
+# --- Guacamole (layer di accesso) ---
+guacamole_version: "1.5.5"
+guac_dir: /opt/vapt-lab/access
+guac_db_name: guacamole_db
+guac_db_user: guacamole_user
+# Segreto INTERNO del lab (Postgres non è esposto). Cambialo pure se vuoi.
+guac_db_password: "LabGuacDB-2026"
+
+# Credenziali iniziali di Guacamole = guacadmin / guacadmin (default dello schema).
+# ⚠ Cambiale al primo login dalla UI (Settings → Users).

@@ -1,0 +1,59 @@
+# Stack di accesso: Postgres + guacd + Guacamole + Nginx(TLS)
+# Generato da Ansible — non modificare a mano.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: vapt-guac-db
+    environment:
+      POSTGRES_DB: {{ guac_db_name }}
+      POSTGRES_USER: {{ guac_db_user }}
+      POSTGRES_PASSWORD: {{ guac_db_password }}
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d:ro
+    networks: [cyber]
+    restart: unless-stopped
+
+  guacd:
+    image: guacamole/guacd:{{ guacamole_version }}
+    container_name: vapt-guacd
+    # guacd deve raggiungere i target su TUTTE le reti per fare da proxy
+    networks: [cyber, datacenter, users]
+    restart: unless-stopped
+
+  guacamole:
+    image: guacamole/guacamole:{{ guacamole_version }}
+    container_name: vapt-guacamole
+    environment:
+      GUACD_HOSTNAME: guacd
+      POSTGRESQL_HOSTNAME: postgres
+      POSTGRESQL_DATABASE: {{ guac_db_name }}
+      POSTGRESQL_USER: {{ guac_db_user }}
+      POSTGRESQL_PASSWORD: {{ guac_db_password }}
+    depends_on: [postgres, guacd]
+    networks: [cyber]
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: vapt-access-nginx
+    ports:
+      - "443:443"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+    depends_on: [guacamole]
+    networks: [cyber]
+    restart: unless-stopped
+
+networks:
+  cyber:
+    external: true
+    name: vapt_cyber
+  datacenter:
+    external: true
+    name: vapt_datacenter
+  users:
+    external: true
+    name: vapt_users

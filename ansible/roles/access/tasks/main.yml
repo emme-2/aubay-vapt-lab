@@ -1,0 +1,69 @@
+# =====================================================================
+#  Ruolo: access — Guacamole dietro Nginx/TLS (unico ingresso al lab)
+#  Stack: postgres + guacd + guacamole + nginx(443).
+# =====================================================================
+- name: Crea le directory dello stack Guacamole
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - "{{ guac_dir }}"
+    - "{{ guac_dir }}/init"
+    - "{{ guac_dir }}/nginx"
+    - "{{ guac_dir }}/nginx/certs"
+
+- name: Verifica se lo schema DB è già stato generato
+  ansible.builtin.stat:
+    path: "{{ guac_dir }}/init/01-initdb.sql"
+  register: initdb_file
+
+- name: Genera lo schema del database Guacamole
+  ansible.builtin.command: >
+    docker run --rm guacamole/guacamole:{{ guacamole_version }}
+    /opt/guacamole/bin/initdb.sh --postgresql
+  register: guac_schema
+  changed_when: true
+  when: not initdb_file.stat.exists
+
+- name: Scrivi lo schema nella cartella di init di Postgres
+  ansible.builtin.copy:
+    content: "{{ guac_schema.stdout }}"
+    dest: "{{ guac_dir }}/init/01-initdb.sql"
+    mode: "0644"
+  when: not initdb_file.stat.exists
+
+- name: Genera certificato TLS self-signed per Nginx
+  ansible.builtin.command: >
+    openssl req -x509 -newkey rsa:2048 -nodes
+    -keyout {{ guac_dir }}/nginx/certs/key.pem
+    -out {{ guac_dir }}/nginx/certs/cert.pem
+    -days 365 -subj "/CN={{ inventory_hostname }}"
+  args:
+    creates: "{{ guac_dir }}/nginx/certs/cert.pem"
+
+- name: Template della configurazione Nginx
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: "{{ guac_dir }}/nginx/default.conf"
+    mode: "0644"
+  notify: Restart access stack
+
+- name: Template del docker-compose dello stack di accesso
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ guac_dir }}/docker-compose.yml"
+    mode: "0644"
+
+- name: Avvia lo stack di accesso
+  ansible.builtin.command: docker compose up -d
+  args:
+    chdir: "{{ guac_dir }}"
+  register: compose_up
+  changed_when: "'Started' in compose_up.stderr or 'Created' in compose_up.stderr"
+
+- name: Attendi che Guacamole risponda su HTTPS
+  ansible.builtin.wait_for:
+    host: 127.0.0.1
+    port: 443
+    timeout: 150

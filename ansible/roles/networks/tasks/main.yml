@@ -1,0 +1,12 @@
+# =====================================================================
+#  Ruolo: networks — crea le 3 reti Docker isolate (idempotente)
+#  Create come reti "esterne": i compose delle fasi successive le
+#  referenziano senza ricrearle.
+# =====================================================================
+- name: Crea le reti del lab se mancanti
+  ansible.builtin.shell: >
+    docker network inspect {{ item.name }} >/dev/null 2>&1 ||
+    docker network create --subnet {{ item.subnet }} {{ item.name }}
+  loop: "{{ lab_networks }}"
+  register: net_result
+  changed_when: "'Error' not in net_result.stdout and net_result.stdout | length > 0"

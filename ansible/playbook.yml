@@ -1,0 +1,14 @@
+# =====================================================================
+#  Aubay VA/PT Demo Lab — configurazione host (Fase 2: fondamenta + accesso)
+#  Eseguito su: make configure  /  make deploy
+# =====================================================================
+- name: Configura l'host del lab
+  hosts: lab
+  become: true
+  gather_facts: true
+
+  roles:
+    - common     # pacchetti base, timezone, hardening leggero
+    - docker     # Docker Engine + plugin compose
+    - networks   # le 3 reti isolate (datacenter / users / cyber)
+    - access     # Guacamole dietro Nginx/TLS (unico ingresso)

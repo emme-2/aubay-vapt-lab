@@ -1,0 +1,7 @@
+# =====================================================================
+#  Handlers: access
+# =====================================================================
+- name: Restart access stack
+  ansible.builtin.command: docker compose restart nginx
+  args:
+    chdir: "{{ guac_dir }}"
