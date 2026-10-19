@@ -11,6 +11,10 @@ lab_networks:
 # --- Target (Fase 3) ---
 targets_dir: /opt/vapt-lab/targets
 
+# --- Desktop VNC per il walk-through (Fase 6a) ---
+# Password VNC del desktop (nodo interno, usata dalla connessione Guacamole).
+desktop_vnc_password: "demo"
+
 # --- Tool VA/PT (Fase 4) ---
 tools_dir: /opt/vapt-lab/tools
 openvas_user: admin

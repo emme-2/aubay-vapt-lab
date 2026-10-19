@@ -8,6 +8,7 @@ TF := terraform -chdir=terraform
 .DEFAULT_GOAL := help
 GUAC_USER ?= guacadmin
 GUAC_PASS ?= guacadmin
+DESKTOP_VNC ?= demo
 
 .PHONY: help my-ip init plan provision configure deploy allow-ip status ssh check-targets seed-guac scan harden restore openvas destroy
 
@@ -54,7 +55,7 @@ check-targets: ## Verifica che i target rispondano sulle reti interne (via SSH)
 	@$$($(TF) output -raw ssh_command) 'bash -s' < scripts/check-targets.sh
 
 seed-guac: ## Crea in Guacamole le connessioni SSH ai nodi (GUAC_PASS=... se cambiata)
-	@$$($(TF) output -raw ssh_command) 'bash -s -- $(GUAC_USER) $(GUAC_PASS)' < scripts/seed-guacamole.sh
+	@$$($(TF) output -raw ssh_command) 'bash -s -- $(GUAC_USER) $(GUAC_PASS) $(DESKTOP_VNC)' < scripts/seed-guacamole.sh
 
 openvas: ## Apre la console web OpenVAS via tunnel SSH su http://localhost:9392
 	@ip=$$($(TF) output -raw server_ipv4); key=$$(grep -E 'ssh_private_key_path' terraform/terraform.tfvars 2>/dev/null | sed 's/.*=//; s/ *//g; s/\"//g'); key=$${key:-~/.ssh/id_ed25519}; \

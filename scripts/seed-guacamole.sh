@@ -38,9 +38,24 @@ create_conn() {
     >/dev/null && echo "  + '$name' creata"
 }
 
-echo "Creo le connessioni SSH..."
+create_vnc() {
+  local name="$1" host="$2" port="$3" pass="$4"
+  if printf '%s\n' "$EXISTING" | grep -qxF "$name"; then
+    echo "  = '$name' già presente"
+    return
+  fi
+  curl -sk -X POST "$GUAC/api/session/data/$DS/connections?token=$TOKEN" \
+    -H "Content-Type: application/json" \
+    -d "{\"parentIdentifier\":\"ROOT\",\"name\":\"$name\",\"protocol\":\"vnc\",\"parameters\":{\"hostname\":\"$host\",\"port\":\"$port\",\"password\":\"$pass\"},\"attributes\":{}}" \
+    >/dev/null && echo "  + '$name' creata"
+}
+
+VNCPASS="${3:-demo}"   # password VNC del desktop (default: demo)
+
+echo "Creo le connessioni..."
 create_conn "redteam (Kali)" 172.20.30.10 22 root   redteam
 create_conn "ws01 (jdoe)"    172.20.20.11 22 jdoe   Password1
 create_conn "ws02 (mrossi)"  172.20.20.12 22 mrossi qwerty
+create_vnc  "Desktop utente (walk-through)" 172.20.20.20 5900 "$VNCPASS"
 
 echo "Fatto. Ricarica Guacamole nel browser: le connessioni sono nella home."

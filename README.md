@@ -132,7 +132,22 @@ make restore            # riporta il proxy allo stato vulnerabile (reset)
 - **Runbook della demo:** [`docs/DEMO-RUNBOOK.md`](docs/DEMO-RUNBOOK.md) — il
   copione passo-passo da seguire in sala, con i comandi pronti.
 
-Con questa fase il lab è **completo**.
+### Fase 6a — desktop grafico per il walk-through
+
+```bash
+make configure          # builda e avvia il desktop (vapt-desktop)
+make seed-guac          # aggiunge la connessione VNC "Desktop utente" in Guacamole
+```
+
+In Guacamole trovi la connessione **"Desktop utente (walk-through)"**: è un
+desktop XFCE con un browser già aperto sulla **pagina di lancio** (bottoni verso
+il portale web e lo shop). Serve a mostrare l'ambiente a personale **non tecnico**,
+senza terminali né codice.
+
+> Il **client di posta** sul desktop arriva con la Fase 6b (richiede di dotare il
+> server mail di IMAP e caselle con messaggi di esempio).
+
+Con queste fasi il lab è completo per la parte tecnica e visiva.
 
 ## Prima della demo: aggiornare l'IP ammesso
 

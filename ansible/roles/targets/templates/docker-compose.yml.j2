@@ -81,6 +81,22 @@ services:
         aliases: [ws02.corp.local]
     restart: unless-stopped
 
+  # Desktop grafico "postazione dipendente" per il walk-through (VNC via Guacamole)
+  desktop:
+    build: ./desktop
+    image: vapt-desktop:latest
+    container_name: vapt-desktop
+    shm_size: "512m"
+    environment:
+      VNC_PASSWORD: "{{ desktop_vnc_password }}"
+      VNC_GEOMETRY: "1360x768"
+    networks:
+      users:
+        ipv4_address: 172.20.20.20
+        aliases: [desktop.corp.local]
+      datacenter: {}
+    restart: unless-stopped
+
 networks:
   datacenter:
     external: true

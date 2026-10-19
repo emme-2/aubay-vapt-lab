@@ -18,6 +18,7 @@
     - workstation
     - mail
     - proxy
+    - desktop
     - ws01_notes.txt
 
 - name: Rendi eseguibili eventuali entrypoint
