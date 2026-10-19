@@ -21,6 +21,7 @@ redteam_root_password: "redteam"
 # --- Guacamole (layer di accesso) ---
 guacamole_version: "1.5.5"
 guac_dir: /opt/vapt-lab/access
+dashboard_dir: /opt/vapt-lab/access/dashboard
 guac_db_name: guacamole_db
 guac_db_user: guacamole_user
 # Segreto INTERNO del lab (Postgres non è esposto). Cambialo pure se vuoi.

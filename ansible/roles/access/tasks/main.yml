@@ -33,6 +33,28 @@
     mode: "0644"
   when: not initdb_file.stat.exists
 
+- name: Crea la directory della dashboard
+  ansible.builtin.file:
+    path: "{{ dashboard_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Copia la pagina della dashboard e il logo (sempre aggiornati)
+  ansible.builtin.copy:
+    src: "dashboard/{{ item }}"
+    dest: "{{ dashboard_dir }}/{{ item }}"
+    mode: "0644"
+  loop:
+    - index.html
+    - logo.png
+
+- name: Inizializza results.json solo se assente (lo popola 'make scan')
+  ansible.builtin.copy:
+    src: dashboard/results.json
+    dest: "{{ dashboard_dir }}/results.json"
+    mode: "0644"
+    force: false
+
 - name: Genera certificato TLS self-signed per Nginx
   ansible.builtin.command: >
     openssl req -x509 -newkey rsa:2048 -nodes

@@ -13,6 +13,16 @@ output "guacamole_url" {
   value       = "https://${hcloud_server.lab.ipv4_address}/guacamole/"
 }
 
+output "dashboard_url" {
+  description = "Dashboard VA/PT brandizzata (solo admin)."
+  value       = "https://${hcloud_server.lab.ipv4_address}/dashboard/"
+}
+
+output "openvas_web_url" {
+  description = "Console web OpenVAS per i colleghi (solo admin, cert self-signed)."
+  value       = "https://${hcloud_server.lab.ipv4_address}:9443/"
+}
+
 output "ssh_command" {
   description = "Comando per connettersi al server."
   value       = "ssh -i ${var.ssh_private_key_path} root@${hcloud_server.lab.ipv4_address}"

@@ -102,9 +102,37 @@ hydra -L /opt/wordlists/users.txt -P /opt/wordlists/passwords.txt ws01.corp.loca
 ```
 
 > **OpenVAS** sincronizza il feed NVT al primo avvio: **30-60+ minuti**.
-> Segui l'avanzamento con `docker logs -f vapt-openvas`. Le scansioni VA
-> complete si lanciano a feed completato. L'accesso web a OpenVAS e la
-> dashboard arrivano con la Fase 5.
+> Segui l'avanzamento con `docker logs -f vapt-openvas`.
+
+**Accesso a OpenVAS — due modi:**
+
+| Chi | Come | Dettagli |
+|---|---|---|
+| Tu (serve la chiave SSH) | `make openvas` | Tunnel SSH → `http://localhost:9392` |
+| Colleghi / spettatori | browser → `https://<IP>:9443/` | Reverse proxy TLS, ristretto agli IP del firewall |
+
+> La porta **9443** va aperta nel firewall (lo fa `make provision` dopo questa
+> modifica) ed è limitata agli stessi `admin_source_ips`. Certificato
+> self-signed: il browser avvisa, si procede comunque. Login: `admin` /
+> `LabOpenVAS-2026`. Perché i colleghi lo vedano, il loro IP dev'essere tra
+> quelli autorizzati (`make allow-ip IP="...,..."`).
+
+### Fase 5 — dashboard + runbook demo
+
+```bash
+make configure          # pubblica la dashboard sotto /dashboard/
+make scan PHASE=before   # scansione VA → popola la baseline
+make harden             # applica la remediation sul proxy
+make scan PHASE=after    # ri-scansione → mostra il delta
+make restore            # riporta il proxy allo stato vulnerabile (reset)
+```
+
+- **Dashboard** (business): `https://<IP>/dashboard/` — severità e confronto
+  Prima/Dopo, si auto-aggiorna dopo ogni `make scan`.
+- **Runbook della demo:** [`docs/DEMO-RUNBOOK.md`](docs/DEMO-RUNBOOK.md) — il
+  copione passo-passo da seguire in sala, con i comandi pronti.
+
+Con questa fase il lab è **completo**.
 
 ## Prima della demo: aggiornare l'IP ammesso
 

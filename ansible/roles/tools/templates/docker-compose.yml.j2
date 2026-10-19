@@ -24,6 +24,10 @@ services:
       USERNAME: "{{ openvas_user }}"
       PASSWORD: "{{ openvas_password }}"
       HTTPS: "false"
+    # Pubblicato SOLO su localhost dell'host: raggiungibile via tunnel SSH,
+    # mai esposto su internet (vedi 'make openvas').
+    ports:
+      - "127.0.0.1:9392:9392"
     volumes:
       - ./data/openvas:/data
     # Deve raggiungere datacenter e utenti per scansionarli

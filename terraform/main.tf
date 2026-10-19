@@ -36,6 +36,14 @@ resource "hcloud_firewall" "lab" {
 
   rule {
     direction   = "in"
+    protocol    = "tcp"
+    port        = "9443"
+    source_ips  = var.admin_source_ips
+    description = "OpenVAS console web via reverse proxy TLS (solo admin)"
+  }
+
+  rule {
+    direction   = "in"
     protocol    = "icmp"
     source_ips  = var.admin_source_ips
     description = "ICMP ping (solo admin)"
