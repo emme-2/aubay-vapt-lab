@@ -144,8 +144,21 @@ desktop XFCE con un browser già aperto sulla **pagina di lancio** (bottoni vers
 il portale web e lo shop). Serve a mostrare l'ambiente a personale **non tecnico**,
 senza terminali né codice.
 
-> Il **client di posta** sul desktop arriva con la Fase 6b (richiede di dotare il
-> server mail di IMAP e caselle con messaggi di esempio).
+### Fase 6b — posta: IMAP + client sul desktop
+
+Il server `mail` ora ha anche **Dovecot (IMAP)** e caselle precaricate; il desktop
+ha **Thunderbird** già configurato sulla casella `jdoe@corp.local`.
+
+```bash
+make configure         # ricostruisce mail (IMAP) e desktop (Thunderbird)
+```
+
+> **Una tantum in prep:** al primo avvio Thunderbird chiede la password della
+> casella → inserisci `Password1` e spunta *ricorda password*. Resta salvata
+> (volume `desktop_tb`), anche dopo un riavvio dei container.
+
+Le 3 mail di `jdoe` includono una con credenziali in chiaro: gancio narrativo per
+il tema "dove vivono i dati sensibili". Login IMAP: `jdoe` / `Password1`.
 
 Con queste fasi il lab è completo per la parte tecnica e visiva.
 

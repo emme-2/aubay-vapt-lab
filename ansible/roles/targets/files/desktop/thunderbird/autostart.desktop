@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Posta aziendale
+Exec=thunderbird
+Icon=thunderbird
+Terminal=false
+X-GNOME-Autostart-enabled=true

@@ -27,6 +27,7 @@ make scan PHASE=before          # popola la baseline della dashboard
   2. `https://<IP>/dashboard/` → scheda **Prima**
   3. `https://<IP>/guacamole/` → connessione **ws01 (jdoe)** (per il finale lateral movement)
 - Verifica che DVWA sia inizializzato: apri una volta `http://web.corp.local/setup.php` dal Kali (`curl`), oppure dal browser via Guacamole. Login DVWA: `admin`/`password`, security level **low**.
+- **Desktop + posta (una tantum):** apri la connessione **Desktop utente** in Guacamole. Thunderbird si avvia da solo; al primo lancio chiede la password della casella → inserisci **`Password1`** e spunta *ricorda password*. Resta salvata (volume persistente), non te la richiede più. Verifica che si vedano le 3 mail di `jdoe`.
 - `make restore` per assicurarti che il proxy parta dallo stato **vulnerabile**.
 - Ingrandisci il font del terminale (leggibilità in sala).
 
@@ -52,6 +53,13 @@ security. Facciamo quello che fareste chiedere a un fornitore: prima fotografiam
 il rischio, poi dimostriamo che è reale."*
 
 Mostra la topologia (diagramma in `docs/ARCHITECTURE.md`).
+
+**Walk-through visivo (opzionale, 2-3 min, per il pubblico non tecnico).**
+Apri la connessione **Desktop utente** in Guacamole: è la postazione di un dipendente.
+Dalla pagina di lancio apri il **Portale Web** e lo **Shop**; poi mostra **Thunderbird**
+con la posta aziendale. **Dì:** *"Questo è ciò che vede un dipendente ogni giorno. Ora
+vediamo cosa vede un attaccante."* Nota la mail "Accesso server condiviso": contiene
+credenziali in chiaro — un gancio perfetto per il tema che segue.
 
 ---
 
@@ -170,6 +178,8 @@ fare."*
 | ws02 (SSH) | mrossi | qwerty |
 | ws02 (SSH) | svc | service |
 | OpenVAS | admin | LabOpenVAS-2026 |
+| Posta IMAP (Thunderbird) | jdoe | Password1 |
+| Desktop VNC (via Guacamole) | — | demo |
 
 > Credenziali deboli **volute**: sono i bersagli della dimostrazione. Ambiente da
 > usare **solo** nel lab isolato.

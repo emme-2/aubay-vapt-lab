@@ -275,7 +275,13 @@ aubay-vapt-lab/
 (nmap → brute force → exploit → SQLi), remediation prima/dopo su DVWA, dashboard,
 accesso via Guacamole.
 
-**Fase 2 (futura):**
+**Fase 2 / roadmap (futura):**
+- **SPA + Keycloak (attacchi IAM/SSO)** — una web app con login OIDC su Keycloak,
+  per dimostrare attacchi sull'identità (user enumeration, credential stuffing,
+  manipolazione token JWT, misconfig client/redirect). Forte differenziatore lato
+  advisory. Da costruire con debolezze deterministiche scelte apposta (Keycloak
+  moderno è robusto di default). Pianificata come **Fase 7**, dopo il dry-run del
+  lab attuale.
 - **Caldera (MITRE ATT&CK)** — attacchi mappati su framework ATT&CK, parla il
   linguaggio che i clienti del partner conoscono.
 - **Trivy** integrato nel flusso come segmento container-security.

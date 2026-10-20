@@ -1,0 +1,18 @@
+From: Marco Rossi <mrossi@corp.local>
+To: Jane Doe <jdoe@corp.local>
+Subject: Accesso server condiviso
+Date: Fri, 17 Oct 2026 17:05:00 +0200
+Content-Type: text/plain; charset=UTF-8
+
+Ciao Jane,
+
+come anticipato, per accedere al server condiviso usa l'account di servizio:
+
+  host: ws02.corp.local
+  user: svc
+  pass: service
+
+Evitiamo di girare queste cose in chiaro la prossima volta... ma per ora va bene.
+Ci vediamo in riunione.
+
+Marco

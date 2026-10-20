@@ -87,15 +87,24 @@ services:
     image: vapt-desktop:latest
     container_name: vapt-desktop
     shm_size: "512m"
+    # Sblocca le user-namespace per la sandbox di Firefox (ambiente di lab)
+    security_opt:
+      - seccomp:unconfined
     environment:
       VNC_PASSWORD: "{{ desktop_vnc_password }}"
       VNC_GEOMETRY: "1360x768"
+    volumes:
+      # Persiste il profilo Thunderbird (password salvata al primo avvio)
+      - desktop_tb:/home/demo/.thunderbird
     networks:
       users:
         ipv4_address: 172.20.20.20
         aliases: [desktop.corp.local]
       datacenter: {}
     restart: unless-stopped
+
+volumes:
+  desktop_tb: {}
 
 networks:
   datacenter:

@@ -1,24 +1,28 @@
 #!/bin/bash
-# Avvio desktop: Xvfb + XFCE + Firefox + x11vnc.
-set -e
+# Avvio desktop: TigerVNC (X+VNC) + XFCE + Firefox. Log attivi.
+# SecurityTypes None: il desktop è interno alla rete Docker, dietro Guacamole
+# e firewall, mai esposto. Nessuna password VNC da gestire.
+set -x
 export HOME=/home/demo
 export DISPLAY=:0
 GEO="${VNC_GEOMETRY:-1360x768}"
-PASS="${VNC_PASSWORD:-demo}"
 
-# Server X virtuale
-Xvfb :0 -screen 0 "${GEO}x24" >/dev/null 2>&1 &
-sleep 2
+# Server X + VNC integrato (TigerVNC) in background, su tutte le interfacce
+Xtigervnc :0 -geometry "$GEO" -depth 24 -rfbport 5900 -localhost no \
+  -SecurityTypes None -AlwaysShared -desktop lab &
+XPID=$!
+
+# Attendi che il display sia pronto
+for i in $(seq 1 40); do
+  xdpyinfo -display :0 >/dev/null 2>&1 && break
+  sleep 0.5
+done
 
 # Sessione desktop XFCE
-dbus-launch xfce4-session >/dev/null 2>&1 &
-sleep 3
+dbus-launch --exit-with-session xfce4-session &
 
-# Browser aperto sulla pagina di lancio della demo
-firefox-esr file:///home/demo/start.html >/dev/null 2>&1 &
+# Browser sulla pagina di lancio (ritardato)
+( sleep 4; firefox-esr file:///home/demo/start.html ) &
 
-# Server VNC (porta 5900) con password
-mkdir -p "$HOME/.vnc"
-x11vnc -storepasswd "$PASS" "$HOME/.vnc/passwd" >/dev/null 2>&1
-exec x11vnc -display :0 -rfbauth "$HOME/.vnc/passwd" -rfbport 5900 \
-     -forever -shared -noxdamage -repeat >/dev/null 2>&1
+# Il container resta vivo finché vive il server X/VNC
+wait "$XPID"
